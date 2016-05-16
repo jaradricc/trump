@@ -1,0 +1,21 @@
+{
+  "storage": {
+    "s3-logs-drill-test": {
+      "type": "file",
+      "enabled": true,
+      "connection": "s3n://dpa-test",
+      "workspaces": {
+        "root": {
+          "location": "/prueba",
+          "writable": false,
+          "defaultInputFormat": null
+        }
+      },
+      "formats": {
+        "json": {
+          "type": "json"
+        }
+      }
+    }
+  }
+}

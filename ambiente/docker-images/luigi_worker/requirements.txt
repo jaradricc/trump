@@ -1,0 +1,7 @@
+awscli
+boto
+luigi
+psycopg2
+numpy
+pandas
+scikit-learn

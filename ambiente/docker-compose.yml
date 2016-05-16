@@ -1,0 +1,106 @@
+#zookeeper:
+#  image: wurstmeister/zookeeper
+#  ports:
+#    - "2181:2181"
+#    - "2888:2888"
+#    - "3888:3888"
+
+postgres:
+  build: docker-images/postgres
+  ports:
+    - "5432:5432"
+  volumes_from:
+    - data
+  env_file: .env
+
+#drill:
+#  build: docker-images/drill
+#  ports:
+#    - "8047:8047"
+#  links:
+#    - zookeeper
+#  volumes_from:
+#    - datalake
+#  volumes:
+#    - /datalake
+#  command: drill-embedded
+
+luigid:
+  build: docker-images/luigid
+  ports:
+    - "8082:8082"
+  volumes:
+    - /usr/local/lib/python3.4/site-packages/luigi/static/visualiser
+
+luigi_worker:
+  build: docker-images/luigi_worker
+  links:
+    - luigid:luigid
+    - postgres:postgres
+    - spark_master
+  env_file: .env
+  #command: make deploy
+  volumes_from:
+    - datalake
+
+data:
+  build: docker-images/data
+  volumes:
+    - /data
+
+datalake:
+  build: docker-images/datalake
+  volumes:
+    - /datalake
+
+#Cluster de Spark
+spark_master:
+  build: docker-images/spark
+  hostname: master
+  ports:
+    - "7077:7077"
+    - "8080:8080"
+    - "6066:6066"
+  container_name: spark_master
+  tty: true
+  command: /usr/spark/bin/spark-class org.apache.spark.deploy.master.Master -h master
+  environment:
+    MASTER: spark://master:7077
+    SPARK_CONF_DIR: /conf/master
+    PYSPARK_PYTHON: python3
+  expose:
+    - 7001
+    - 7002
+    - 7003
+    - 7004
+    - 7005
+    - 7006
+    - 7077
+    - 6066
+  volumes:
+    - ./conf/master:/conf
+
+spark_worker:
+  build: docker-images/spark
+  links:
+    - spark_master
+  command: /usr/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://master:7077
+  hostname: worker
+  environment:
+    SPARK_CONF_DIR: /conf/worker
+    SPARK_WORKER_CORES: 2
+    SPARK_WORKER_MEMORY: 1g
+    SPARK_WORKER_PORT: 8881
+    SPARK_WORKER_WEBUI_PORT: 8081
+    PYSPARK_PYTHON: python3
+  expose:
+    - 7012
+    - 7013
+    - 7014
+    - 7015
+    - 7016
+    - 8881
+  ports:
+    - 8081
+  volumes:
+    - ./conf/worker:/conf
