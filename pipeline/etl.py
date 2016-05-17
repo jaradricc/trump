@@ -22,8 +22,8 @@ from pyspark.sql import HiveContext
 from pyspark.sql import Row
 from pyspark.conf import SparkConf
 
-from test import HolaMundoTask
-import test_spark
+# from test import HolaMundoTask
+# import test_spark
 
 
 class AllTasks(luigi.WrapperTask):
@@ -38,7 +38,7 @@ class AllTasks(luigi.WrapperTask):
 
 class ReadContainer(luigi.ExternalTask):
     def output(self):
-        return luigi.s3.S3Target(configuration.get_config().get('etl','bucket'),'/raw')
+        return luigi.s3.S3Target(configuration.get_config().get('etl','bucket')+'/raw')
 
 class CleanTweets(SparkSubmitTask):
     sighting_date = luigi.DateParameter()
@@ -59,7 +59,12 @@ class CleanTweets(SparkSubmitTask):
 
 
     def output(self):
-        return luigi.s3.S3Target('{}/tweets/etl/agregated/year={}/month={}/day={}'.format(self.bucket,
+        return luigi.s3.S3Target('{}/tweets/agregated/year={}/month={}/day={}/'.format(self.bucket,
                                                                                 self.sighting_date.year,
                                                                                 self.sighting_date.month,
                                                                                 self.sighting_date.day))
+
+
+
+if __name__ == '__main__':
+    luigi.run()
