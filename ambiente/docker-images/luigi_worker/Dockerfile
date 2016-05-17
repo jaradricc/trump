@@ -70,8 +70,8 @@ RUN chown $DPA_USER:users /home/$DPA_USER/.boto
 WORKDIR /home/$DPA_USER
 
 ## Clonamos el repositorio
-RUN git clone https://github.com/jaradricc/data-product-architecture.git
+RUN git clone https://github.com/jaradricc/Trump.git
 
-WORKDIR /home/$DPA_USER/data-product-architecture/producto/pipeline
+WORKDIR /home/$DPA_USER/Trump/pipeline
 
 CMD [ "/bin/sh",  "-c", "while true; do echo hello world; sleep 1; done"]

@@ -33,7 +33,8 @@ class AllTasks(luigi.WrapperTask):
     Si se usa una clase normal, el pipeline siempre marcará error
     """
     def requires(self):
-        yield tweetsToDatabase(sighting_date = self.sighting_date)
+        # yield tweetsToDatabase(sighting_date = self.sighting_date)
+        yield CleanTweets(sighting_date = self.sighting_date)
 
 class ReadContainer(luigi.ExternalTask):
     def output(self):
@@ -58,7 +59,7 @@ class CleanTweets(SparkSubmitTask):
 
 
     def output(self):
-        return luigi.s3.S3Target('{}/ufo/etl/agregated/year={}/month={}/day={}'.format(self.bucket,
+        return luigi.s3.S3Target('{}/tweets/etl/agregated/year={}/month={}/day={}'.format(self.bucket,
                                                                                 self.sighting_date.year,
                                                                                 self.sighting_date.month,
                                                                                 self.sighting_date.day))

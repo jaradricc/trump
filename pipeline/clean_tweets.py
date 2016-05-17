@@ -24,12 +24,11 @@ if __name__ == "__main__":
     sqlCtx = HiveContext(sc)
 
 
-## Tenemos que leer archivos .avro y, una vez abierto, extraer del grupo de tweets (.json) los campos que nos interesan
-    sqlCtx.read.format('com.databricks.spark.avro')\
-                       .load(sys.argv[1])\
-                       .registerTempTable('tweets')
+## Tenemos que leer archivos .json y, una vez abierto, extraer del grupo de tweets (.json) los campos que nos interesan
+    sqlCtx.read.json(sys.argv[1])\
+                    .registerTempTable('tweets')
 
-    sqlCtx.sql("select State as estado, count(*) as avistamientos from avistamientos group by State")\
+    sqlCtx.sql("select id_str,favorite_count,retweet_count,text from tweets")\
         .coalesce(1)\
         .write.parquet(sys.argv[2], mode='overwrite')
     print ("Terminada la tarea de spark")
