@@ -1,3 +1,8 @@
+flume:
+ env_file: .env
+ build: docker-images/flume
+ command: flume-ng agent -n TwitterAgent -c /usr/flume/apache-flume-1.6.0-bin/conf -f /home/flume/twitter.conf -Dflume.root.logger=INFO,console  
+ 
 #zookeeper:
 #  image: wurstmeister/zookeeper
 #  ports:
