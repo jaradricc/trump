@@ -34,13 +34,16 @@ class AllTasks(luigi.WrapperTask):
     """
     def requires(self):
         # yield tweetsToDatabase(sighting_date = self.sighting_date)
-        yield CleanTweets(sighting_date = self.sighting_date)
+        yield Tweets_String(sighting_date = self.sighting_date)
 
 class ReadContainer(luigi.ExternalTask):
     def output(self):
-        return luigi.s3.S3Target(configuration.get_config().get('etl','bucket')+'/raw')
+        return luigi.s3.S3Target(configuration.get_config().get('etl','bucket')+'/05-19-20/')
 
-class CleanTweets(SparkSubmitTask):
+
+
+
+class Tweets_String(SparkSubmitTask):
     sighting_date = luigi.DateParameter()
     bucket = configuration.get_config().get('etl','bucket')
     def requires(self):
@@ -55,12 +58,11 @@ class CleanTweets(SparkSubmitTask):
 
     @property
     def app(self):
-        return 'clean_tweets.py'
+        return 'tweets_string.py'
 
 
     def output(self):
-        return luigi.s3.S3Target('{}/tweets/agregated/year={}/month={}/day={}/'.format(self.bucket,
-                                                                                self.sighting_date.year,
+        return luigi.target.Target('/home/dpa_worker/model_data/year={}/month={}/day={}/'.format(self.sighting_date.year,
                                                                                 self.sighting_date.month,
                                                                                 self.sighting_date.day))
 
