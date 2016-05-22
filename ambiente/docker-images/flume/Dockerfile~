@@ -1,0 +1,46 @@
+FROM dpa/base
+
+MAINTAINER Luis C. Cruz <luiscruz.2908@gmail.com> 
+
+ENV REFRESHED_AT 2015-05-01
+ENV DEBIAN-FRONTEND noninteractive
+
+USER root
+
+RUN apt-get install apt-transport-https
+
+## Descargando el paquete de configuración de Cloudera
+RUN wget -P /tmp -c http://archive.cloudera.com/cdh5/one-click-install/trusty/amd64/cdh5-repository_1.0_all.deb
+
+## Instalando Hadoop de modo Pseudo Distribuido
+RUN dpkg -i /tmp/cdh5-repository_1.0_all.deb \
+&& apt-get update \
+&& apt-get -y install hadoop-conf-pseudo
+
+RUN apt-get -y install flume-ng 
+
+RUN mkdir /usr/flume
+
+ENV JAVA_OPTS="-Xms1000m -Xmx5000m -Dcom.sun.management.jmxremote"
+
+RUN mkdir /home/flume/
+RUN mkdir /home/flume/source/
+RUN mkdir /home/flume/sink/
+
+ADD twitter.conf /home/flume/
+ADD flume-sources-1.0-SNAPSHOT.jar /
+
+## Download custom cloudera flume
+RUN cp flume-sources-1.0-SNAPSHOT.jar /usr/lib/flume-ng/lib/flume-sources-1.0-SNAPSHOT.jar
+RUN mkdir /var/lib/flume-ng/plugins.d/
+RUN mkdir /var/lib/flume-ng/plugins.d/twitter-streaming/
+RUN mkdir /var/lib/flume-ng/plugins.d/twitter-streaming/lib/
+RUN cp flume-sources-1.0-SNAPSHOT.jar /var/lib/flume-ng/plugins.d/twitter-streaming/lib/flume-sources-1.0-SNAPSHOT.jar
+
+## RUN flume-ng agent -n TwitterAgent -c /usr/flume/apache-flume-1.6.0-bin/conf -f /home/flume/twitter.conf -Dflume.root.logger=INFO,console 
+
+
+
+
+
+

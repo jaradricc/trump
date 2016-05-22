@@ -1,0 +1,38 @@
+# Naming the components on the current age/home/lnt. 
+TwitterAgent.sources = Twitter 
+TwitterAgent.channels = MemChannel 
+TwitterAgent.sinks = s3hdfs
+  
+# Describing/Configuring the source 
+# TwitterAgent.sources.Twitter.type = org.apache.flume.source.twitter.TwitterSource
+TwitterAgent.sources.Twitter.type = com.cloudera.flume.source.TwitterSource
+TwitterAgent.sources.Twitter.consumerKey = o1D5lpY2ofC4bfMdpbkjvv5Ld
+TwitterAgent.sources.Twitter.consumerSecret = cGF6fPweEXI3bU0Si81ZawrKXpHF4VDgHeGIXzzkPOBPseMcZI
+TwitterAgent.sources.Twitter.accessToken = 16146968-QXAnAnh25NZRtEPVqTGHDfFjMjbX7bXb7iPrh7H8e
+TwitterAgent.sources.Twitter.accessTokenSecret = Ci4KqE5mAccPqWlHWbpBE9ZHP4Ovg3bjmsd83yp53Oh8q
+TwitterAgent.sources.Twitter.keywords = @realdonaldtrump,#Trump,#trump
+  
+# Describing/Configuring the sink 
+
+TwitterAgent.sinks.s3hdfs.type = hdfs
+#TwitterAgent.sinks.s3hdfs.hdfs.path = s3n://AKIAJ6UJUFAMYM52RA6A:mroObjSSYM87IH0t2nB1vKG9z17s3NtbYM65vwNt@lcruz-tweets/%m-%d-%H/
+TwitterAgent.sinks.s3hdfs.hdfs.path = s3n://AKIAIVFEEIAI7J573OAQ:wH7Bj7JnMuEy26lfZHAYjEXemu60rMmyvVcmL+om@lcruz-tweets/%m-%d-%H/
+TwitterAgent.sinks.s3hdfs.hdfs.fileType = DataStream
+TwitterAgent.sinks.s3hdfs.hdfs.filePrefix = tweets
+TwitterAgent.sinks.s3hdfs.hdfs.fileSuffix = .json
+TwitterAgent.sinks.s3hdfs.hdfs.writeFormat = Text
+TwitterAgent.sinks.s3hdfs.hdfs.rollCount = 0
+TwitterAgent.sinks.s3hdfs.hdfs.rollSize = 0  
+TwitterAgent.sinks.s3hdfs.hdfs.batchSize = 100
+TwitterAgent.sinks.s3hdfs.hdfs.useLocalTimeStamp = true
+TwitterAgent.sinks.s3hdfs.hdfs.maxOpenFiles = 5
+ 
+# Describing/Configuring the channel TwitterAgent.channels.MemChannel.type = memory 
+#should be big
+TwitterAgent.channels.MemChannel.capacity = 10000 
+TwitterAgent.channels.MemChannel.transactionCapacity = 1000
+TwitterAgent.channels.MemChannel.type=memory
+  
+# Binding the source and sink to the channel 
+TwitterAgent.sources.Twitter.channels = MemChannel
+TwitterAgent.sinks.s3hdfs.channel = MemChannel 
