@@ -59,7 +59,7 @@ class Top_Users(SparkSubmitTask):
 
 
     def output(self):
-        return luigi.target.Target('/home/dpa_worker/dashboard/{}{}{}top_users.json'.format(self.sighting_date.year,
+        return luigi.file.LocalTarget('/home/dpa_worker/dashboard/{}{}{}top_users.json'.format(self.sighting_date.year,
                                                                                 self.sighting_date.month,
                                                                                 self.sighting_date.day))
 
@@ -73,7 +73,7 @@ class Tweets_String(SparkSubmitTask):
 
     @property
     def name(self):
-        return 'CleanTweets'
+        return 'Tweets_String'
 
     def app_options(self):
         return [self.input().path, self.output().path]
@@ -84,9 +84,7 @@ class Tweets_String(SparkSubmitTask):
 
 
     def output(self):
-        return luigi.target.Target('/home/dpa_worker/model_data/{}{}{}tweets.json'.format(self.sighting_date.year,
-                                                                                self.sighting_date.month,
-                                                                                self.sighting_date.day))
+        return luigi.file.LocalTarget('/home/dpa_worker/model_data/{}{}{}tweets.json'.format(self.sighting_date.year,self.sighting_date.month,self.sighting_date.day))
 
 
 
