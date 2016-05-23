@@ -36,6 +36,7 @@ class AllTasks(luigi.WrapperTask):
         # yield tweetsToDatabase(sighting_date = self.sighting_date)
         yield Tweets_String(sighting_date = self.sighting_date)
         yield Top_Users(sighting_date = self.sighting_date)
+        yield Top_Hashtags(sighting_date = self.sighting_date)
 
 class ReadContainer(luigi.ExternalTask):
     def output(self):
@@ -62,7 +63,27 @@ class Top_Users(SparkSubmitTask):
         return luigi.file.LocalTarget('/home/dpa_worker/dashboard/{}{}{}top_users.json'.format(self.sighting_date.year,
                                                                                 self.sighting_date.month,
                                                                                 self.sighting_date.day))
+class Top_Hashtags(SparkSubmitTask):
+    sighting_date = luigi.DateParameter()
+    def requires(self):
+        return ReadContainer()
 
+    @property
+    def name(self):
+        return 'Top_Hashtags'
+
+    def app_options(self):
+        return [self.input().path, self.output().path]
+
+    @property
+    def app(self):
+        return 'top_hashtags.py'
+
+
+    def output(self):
+        return luigi.file.LocalTarget('/home/dpa_worker/dashboard/{}{}{}top_hashtags.json'.format(self.sighting_date.year,
+                                                                                self.sighting_date.month,
+                                                                                self.sighting_date.day))
 
 
 class Tweets_String(SparkSubmitTask):

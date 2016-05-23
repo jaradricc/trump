@@ -2,7 +2,9 @@
 El ambiente consta de los componentes:
 * Luigi (con su luigi worker).
 * Spark (con su worker).
-* Postgres.
+* ~~Python para el análisis de texto~~
+* ~~datalake para exponer los datos procesados a los componentes de: análisis de texto y shinny~~
+* ~~Shinny para visualización de algunas estadísticas de los datos procesados.~~
 
 ## Particularidades del ambiente.
 En general, se levanta utilizando el docker-compose, sin embargo Spark requiere que exista la imágen dpa/base la cual se construye con el comando:
