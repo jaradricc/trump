@@ -28,7 +28,7 @@ if __name__ == "__main__":
     sqlCtx.read.json(sys.argv[1])\
                     .registerTempTable('tweets')
 
-    sqlCtx.sql("text as tweet from tweets")\
+    sqlCtx.sql("select user.screen_name as user_name ,count(user.screen_name) as total from tweets group by user.screen_name order by total desc")\
         .toPandas()\
         .to_json(sys.argv[2])
     print ("Terminada la tarea de spark")

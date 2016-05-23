@@ -35,11 +35,33 @@ class AllTasks(luigi.WrapperTask):
     def requires(self):
         # yield tweetsToDatabase(sighting_date = self.sighting_date)
         yield Tweets_String(sighting_date = self.sighting_date)
+        yield Top_Users(sighting_date = self.sighting_date)
 
 class ReadContainer(luigi.ExternalTask):
     def output(self):
         return luigi.s3.S3Target(configuration.get_config().get('etl','bucket')+'/05-19-20/')
 
+class Top_Users(SparkSubmitTask):
+    sighting_date = luigi.DateParameter()
+    def requires(self):
+        return ReadContainer()
+
+    @property
+    def name(self):
+        return 'Top_Users'
+
+    def app_options(self):
+        return [self.input().path, self.output().path]
+
+    @property
+    def app(self):
+        return 'top_users.py'
+
+
+    def output(self):
+        return luigi.target.Target('/home/dpa_worker/dashboard/{}{}{}top_users.json'.format(self.sighting_date.year,
+                                                                                self.sighting_date.month,
+                                                                                self.sighting_date.day))
 
 
 
@@ -62,7 +84,7 @@ class Tweets_String(SparkSubmitTask):
 
 
     def output(self):
-        return luigi.target.Target('/home/dpa_worker/model_data/year={}/month={}/day={}/'.format(self.sighting_date.year,
+        return luigi.target.Target('/home/dpa_worker/model_data/{}{}{}tweets.json'.format(self.sighting_date.year,
                                                                                 self.sighting_date.month,
                                                                                 self.sighting_date.day))
 
