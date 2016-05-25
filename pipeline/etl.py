@@ -37,10 +37,35 @@ class AllTasks(luigi.WrapperTask):
         yield Tweets_String(sighting_date = self.sighting_date)
         yield Top_Users(sighting_date = self.sighting_date)
         yield Top_Hashtags(sighting_date = self.sighting_date)
+        yield Count_Bydate(sighting_date = self.sighting_date)
 
 class ReadContainer(luigi.ExternalTask):
     def output(self):
         return luigi.s3.S3Target(configuration.get_config().get('etl','bucket')+'/05-19-20/')
+
+class Count_Bydate(SparkSubmitTask):
+    sighting_date = luigi.DateParameter()
+    def requires(self):
+        return ReadContainer()
+
+    @property
+    def name(self):
+        return 'Count_Bydate'
+
+    def app_options(self):
+        return [self.input().path, self.output().path]
+
+    @property
+    def app(self):
+        return 'count_bydate.py'
+
+
+    def output(self):
+        return luigi.file.LocalTarget('/home/dpa_worker/dashboard/{}{}{}countbydate.json'.format(self.sighting_date.year,
+                                                                                self.sighting_date.month,
+                                                                                self.sighting_date.day))
+
+
 
 class Top_Users(SparkSubmitTask):
     sighting_date = luigi.DateParameter()
