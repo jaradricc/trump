@@ -3,7 +3,7 @@
 Este Dockerfile instala la imagen de Luigi Worker
 
 
-´´´ python
+```python
 FROM python:3.4-slim
 
 ENV LUIGI_HOME /etc/luigi
@@ -66,7 +66,7 @@ WORKDIR /home/$DPA_USER/Trump/pipeline
 
 CMD [ "/bin/sh",  "-c", "while true; do echo hello world; sleep 1; done"]
 
-´´´
+```
 
 Podemos observar que este código realiza las siguientes tareas
 
@@ -84,7 +84,7 @@ Podemos observar que este código realiza las siguientes tareas
 
 El archivo .boto debe contener la siguiente información:
 
-´´´python
+```python
 [Credentials]
 aws_access_key_id = ACCESS_KIV52_KEY_ID
 aws_secret_access_key = SECRET_ENYq86s_ACCESS_KEY
@@ -92,7 +92,7 @@ aws_secret_access_key = SECRET_ENYq86s_ACCESS_KEY
 [Boto]
 debug = 2
 num_retries = 10
-´´´
+```
 El archivo debe ser creado en la misma carepta en donde se encuentra el Dockerfile de luigiworker.
 
 Finalmente, agregamos la llave para que pueda descargar nuestro repo de github y creamos el comando que queremos que este luigi worker empiece a ejecutar.
