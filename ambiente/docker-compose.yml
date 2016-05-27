@@ -2,33 +2,20 @@ flume:
  env_file: .env
  build: docker-images/flume
  command: flume-ng agent -n TwitterAgent -c /usr/flume/apache-flume-1.6.0-bin/conf -f /home/flume/twitter.conf -Dflume.root.logger=INFO,console  
- 
-#zookeeper:
-#  image: wurstmeister/zookeeper
-#  ports:
-#    - "2181:2181"
-#    - "2888:2888"
-#    - "3888:3888"
 
-postgres:
-  build: docker-images/postgres
-  ports:
-    - "5432:5432"
-  volumes_from:
-    - data
-  env_file: .env
+zookeeper:
+ image: wurstmeister/zookeeper
+ ports:
+   - "2181:2181"
+   - "2888:2888"
+   - "3888:3888"
 
-#drill:
-#  build: docker-images/drill
-#  ports:
-#    - "8047:8047"
-#  links:
-#    - zookeeper
-#  volumes_from:
-#    - datalake
-#  volumes:
-#    - /datalake
-#  command: drill-embedded
+
+datalake:
+  build: docker-images/datalake
+  volumes:
+    - /datalake
+
 
 luigid:
   build: docker-images/luigid
@@ -41,22 +28,12 @@ luigi_worker:
   build: docker-images/luigi_worker
   links:
     - luigid:luigid
-    - postgres:postgres
+#    - postgres:postgres
     - spark_master
   env_file: .env
   #command: make deploy
   volumes_from:
     - datalake
-
-data:
-  build: docker-images/data
-  volumes:
-    - /data
-
-datalake:
-  build: docker-images/datalake
-  volumes:
-    - /datalake
 
 #Cluster de Spark
 spark_master:
@@ -109,3 +86,16 @@ spark_worker:
     - 8081
   volumes:
     - ./conf/worker:/conf
+
+shiny:
+ build: docker-images/shiny
+ ports: 
+  - "6403:6403"
+ command: Rscript launch.R
+ volumes_from:
+  - datalake
+
+python:
+  build: docker-images/python
+  volumes_from:
+    - datalake
