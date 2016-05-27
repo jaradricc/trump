@@ -96,3 +96,7 @@ A partir de estos datos, la aplicación muestra:
 
 
 [Shiny](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/Shiny)
+
+![Shiny 1](Readme_images/shiny_01.PNG)
+![Shiny 2](Readme_images/shiny_02.PNG)
+![Shiny 3](Readme_images/shiny_04.PNG)
