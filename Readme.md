@@ -35,7 +35,7 @@ La arquitectura de Flume es sencilla y está basada en flujos de datos en stream
 En el caso de este proyecto la fuente es Twitter, mientras que el canal es de tipo memoria y el sumidero es el sistema de archivos
 distribuidos S3 de Amazon.
 
-[Imagen de Flume](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/flume)
+[Imagen de Flume](https://github.com/jaradricc/trump/tree/master/ambiente/docker-images/flume)
 
 
 * Luigi
@@ -46,11 +46,11 @@ las dependencias pueden incluir referencias recursivas de las tareas.
 En este proyecto Luigi es utilizado para generar el pipeline y las dependencias entre las tareas, desde la ingesta de la información hasta
 la escritura de los datos procesados hasta el Data Lake.
 
-[Imagen de Luigi](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/luigid)
+[Imagen de Luigi](https://github.com/jaradricc/trump/tree/master/ambiente/docker-images/luigid)
 
-[Imagen de Luigi_worker](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/luigi_worker)
+[Imagen de Luigi_worker](https://github.com/jaradricc/trump/tree/master/ambiente/docker-images/luigi_worker)
 
-[etl](https://github.com/omisimo/trump/tree/master/pipeline)
+[etl](https://github.com/jaradricc/trump/tree/master/pipeline)
 
 
 * Spark
@@ -95,7 +95,7 @@ A partir de estos datos, la aplicación muestra:
 3) La nube de palabras para los hashtags más populares, con el número de hashtags a mostrar elegido por el usuario.
 
 
-[Shiny](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/Shiny)
+[Shiny](https://github.com/jaradricc/trump/tree/master/ambiente/docker-images/Shiny)
 
 ![Shiny 1](Readme_images/shiny_01.PNG)
 ![Shiny 2](Readme_images/shiny_02.PNG)
