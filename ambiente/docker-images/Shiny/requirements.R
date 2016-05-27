@@ -1,8 +1,0 @@
-install.packages("shiny")
-install.packages("RJSONIO")
-install.packages("ggplot2")
-install.packages("dplyr")
-install.packages("wordcloud")
-install.packages("tidyr")
-install.packages("shinydashboard")
-install.packages("leaflet")
