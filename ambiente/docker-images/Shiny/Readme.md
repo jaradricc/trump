@@ -260,7 +260,7 @@ dashboardPage(
 setwd("/root")
 
 
-shiny::runApp(port=6403,host="172.17.0.2")
+shiny::runApp(port=6403,host="shiny")
 
 
 ```
