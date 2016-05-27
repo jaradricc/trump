@@ -1,12 +1,29 @@
 # Análisis del sentimiento de tweets
 
 ## Descripción y objetivos del proyecto
-Este proyecto tiene como objetivo realizar un análisis de tweets sobre Trump, obteniendo estadísticas de los tweets, hashtags y estableciendo un modelo para la clasificación del sentimiento. ~~Detallar un poco más~~
+Este proyecto tiene como objetivo realizar un análisis de tweets relativos a la campaña presidencial de Donald Trump desde diferentes aristas, es decir, se pretende obtener estadísticas descriptivas de los tuits que contengan @realdonaldtrump, #Trump, #trump, #Trump2016 en su cuerpo, así como realizar un modelo estadístico que nos ayude a identificar los tópicos que rodean su carrera presidencial.
 
-El proyecto consiste de múltiples tecnologías y componentes organizados según los lineamientos de la [Arquitectura Lambda](http://lambda-architecture.net/), la cual define una arquitectura genérica, escalable y tolerante a faltas para el procesamiento de datos en _batch_ y _streaming_. ~~Agregar imagen actualizada~~
+A lo largo de este documento se aboradarán cada uno de estos temas, comenzando en principio por el diseño de la arquitecutra, la descripción de las componentes que conforman el cluster junto con sus respectivas tareas, así como el detalle del modelo de minería de texto que se utilizó para identificar los diversos tópicos.
+
+## Descripción de la arquitectura
+
+El proyecto consiste de múltiples tecnologías y componentes organizados según los lineamientos de la [Arquitectura Lambda](http://lambda-architecture.net/), la cual define una arquitectura genérica, escalable y tolerante a faltas para el procesamiento de datos en _batch_.
+
+
+![Diseño Arquitectura](Readme_images/arqui.png)
+
+Tal y como se puede observar en la gráfica anterior la arquitectura puede ser dividida en tres grandes fases:
+
+* La lectura de la información (Flume, S3)
+* Procesamiento de la información ( Luigi, Spark)
+* Modelo Estadístico y Dashboard (Python, Shiny)
+
+A continuación veremos una breve descripción de los componentes que definenen el ambiente.
 
 ## Ambiente
+
 El ambiente consta de los componentes:
+
 * Flume
 * Luigi
 * Luigi workers
@@ -18,7 +35,3 @@ El ambiente consta de los componentes:
 * ~~Python para el análisis de texto~~
 * ~~datalake para exponer los datos procesados a los componentes de: análisis de texto y shinny~~
 * ~~Shinny para visualización de algunas estadísticas de los datos procesados.~~
-
-## Descripción de la arquitectura
-
-![Diseño Arquitectura](Readme_images/arqui.png)
