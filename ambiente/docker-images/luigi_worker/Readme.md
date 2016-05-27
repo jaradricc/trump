@@ -3,7 +3,7 @@
 Este Dockerfile instala la imagen de Luigi Worker
 
 
-```python
+```bash
 FROM python:3.4-slim
 
 ENV LUIGI_HOME /etc/luigi
@@ -84,7 +84,7 @@ Podemos observar que este código realiza las siguientes tareas
 
 El archivo .boto debe contener la siguiente información:
 
-```python
+```bash
 [Credentials]
 aws_access_key_id = ACCESS_KIV52_KEY_ID
 aws_secret_access_key = SECRET_ENYq86s_ACCESS_KEY

@@ -4,7 +4,7 @@
 Este código nos va a generar la imagen de luigid y levantar el contenedor, dejándolo activo con el puerto 8082. En particular en el Dockerfile de la imagen de luigid podemos ver que instala python e instala los paquetes que necesitamos.
 
 
-```python
+```bash
 FROM python:3.4-onbuild
 
 ADD requirements.txt /tmp/requirements.txt
