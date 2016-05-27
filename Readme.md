@@ -48,6 +48,9 @@ la escritura de los datos procesados hasta el Data Lake.
 
 [Imagen de Luigi](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/luigid)
 
+[Imagen de Luigi_worker](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/luigi_worker)
+
+[etl](https://github.com/omisimo/trump/tree/master/pipeline)
 
 
 * Spark
@@ -62,8 +65,6 @@ Más concretamente, en este proyecto SparkSQL se utiliza para dos tareas indepen
 2) La extracción de los caracteres que conforman los Tweets para utilizar como entrada del modelo de Minería de Textos.
 
 
-[Imagen de Spark](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/spark)
-
 
 * Datalake
 
@@ -74,7 +75,6 @@ por diferentes grupos de usuarios para múltiples propósitos; desde la aplicaci
 En este proyecto el DataLake es utilizado para almacenar los datos que provienen de ambas tareas realizadas en PySpark. Posteriormente, estos datos son utilizados para
 el monitoreo de los datos en la aplicación de Shiny y para la construcción del modelo de Minería de Textos.
 
-[Imagen de Datalake](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/datalake)
 
 
 * Shiny
@@ -89,5 +89,10 @@ de la tarea realizada en PySpark que reúne, para cierto determinado período de
 A partir de estos datos, la aplicación muestra:
 
 1) La serie de tiempo mostrando la evolución del número de Tweets y Retweets, para un período de fechas recientes elegidas por el usuario.
+
 2) El Top de usuarios que más han realizado Tweets y su número de Tweets mediante una gráfica de barras, para un número de número de usuarios elegido por el usuario.
+
 3) La nube de palabras para los hashtags más populares, con el número de hashtags a mostrar elegido por el usuario.
+
+
+[Shiny](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/Shiny)
