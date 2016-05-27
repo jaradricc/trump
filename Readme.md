@@ -29,18 +29,18 @@ A continuación veremos una breve descripción de los componentes que definenen 
 
 * Luigi
 
-[Luigi](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/flume)
+[Luigi](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/luigid)
 
 
 
 * Spark
 
-[Spark](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/flume)
+[Spark](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/spark)
 
 
 * Datalake
 
-[Datalake](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/flume)
+[Datalake](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/datalake)
 
 
 * Python
