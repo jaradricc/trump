@@ -22,16 +22,28 @@ A continuación veremos una breve descripción de los componentes que definenen 
 
 ## Ambiente
 
-El ambiente consta de los componentes:
-
 * Flume
+
+[Flume](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/flume)
+
+
 * Luigi
-* Luigi workers
+
+[Luigi](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/flume)
+
+
+
 * Spark
-* Spark workers
+
+[Spark](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/flume)
+
+
 * Datalake
+
+[Datalake](https://github.com/omisimo/trump/tree/master/ambiente/docker-images/flume)
+
+
 * Python
+
+
 * Shiny
-* ~~Python para el análisis de texto~~
-* ~~datalake para exponer los datos procesados a los componentes de: análisis de texto y shinny~~
-* ~~Shinny para visualización de algunas estadísticas de los datos procesados.~~
