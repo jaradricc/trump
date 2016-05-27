@@ -1,96 +1,102 @@
 # Análisis del sentimiento de tweets
 
 ## Descripción y objetivos del proyecto
-Este proyecto tiene como objetivo realizar un análisis de tweets sobre Trump, obteniendo estadísticas de los tweets, hashtags y estableciendo un modelo para la clasificación del sentimiento. ~~Detallar un poco más~~
+Este proyecto tiene como objetivo realizar un análisis de tweets relativos a la campaña presidencial de Donald Trump desde diferentes aristas, es decir, se pretende obtener estadísticas descriptivas de los tuits que contengan @realdonaldtrump, #Trump, #trump, #Trump2016 en su cuerpo, así como realizar un modelo estadístico que nos ayude a identificar los tópicos que rodean su carrera presidencial.
 
-El proyecto consiste de múltiples tecnologías y componentes organizados según los lineamientos de la [Arquitectura Lambda](http://lambda-architecture.net/), la cual define una arquitectura genérica, escalable y tolerante a faltas para el procesamiento de datos en _batch_ y _streaming_. ~~Agregar imagen actualizada~~
+A lo largo de este documento se aboradarán cada uno de estos temas, comenzando en principio por el diseño de la arquitecutra, la descripción de las componentes que conforman el cluster junto con sus respectivas tareas, así como el detalle del modelo de minería de texto que se utilizó para identificar los diversos tópicos.
+
+## Descripción de la arquitectura
+
+El proyecto consiste de múltiples tecnologías y componentes organizados según los lineamientos de la [Arquitectura Lambda](http://lambda-architecture.net/), la cual define una arquitectura genérica, escalable y tolerante a faltas para el procesamiento de datos en _batch_.
+
+
+![Diseño Arquitectura](Readme_images/arqui.png)
+
+Tal y como se puede observar en la gráfica anterior la arquitectura puede ser dividida en tres grandes fases:
+
+* La lectura de la información (Flume, S3)
+* Procesamiento de la información ( Luigi, Spark)
+* Modelo Estadístico y Dashboard (Python, Shiny)
+
+A continuación veremos una breve descripción de los componentes que definenen el ambiente.
 
 ## Ambiente
-El ambiente consta de los componentes:
+
 * Flume
-* Luigi (con su luigi worker).
+
+Apache Flume es un servicio distribuido y seguro para la recolección, agregación y movimiento de grandes cantidades de datos.
+
+La arquitectura de Flume es sencilla y está basada en flujos de datos en streaming. A grandes rasgos, la arquitectura de Flume posee tres elementos:
+
+1) Fuente
+2) Canal
+3) Sumidero
+
+En el caso de este proyecto la fuente es Twitter, mientras que el canal es de tipo memoria y el sumidero es el sistema de archivos
+distribuidos S3 de Amazon.
+
+[Imagen de Flume](https://github.com/jaradricc/trump/tree/master/ambiente/docker-images/flume)
+
+
+* Luigi
+
+Luigi es un entorno basado en Python para la construcción de pipelines. Esto permite construir grandes grafos de dependencias de tareas, en donde
+las dependencias pueden incluir referencias recursivas de las tareas.
+
+En este proyecto Luigi es utilizado para generar el pipeline y las dependencias entre las tareas, desde la ingesta de la información hasta
+la escritura de los datos procesados hasta el Data Lake.
+
+[Imagen de Luigi](https://github.com/jaradricc/trump/tree/master/ambiente/docker-images/luigid)
+
+[Imagen de Luigi_worker](https://github.com/jaradricc/trump/tree/master/ambiente/docker-images/luigi_worker)
+
+[etl](https://github.com/jaradricc/trump/tree/master/pipeline)
+
+
+* Spark
+
+Spark es un entorno de cómputo distribuido para el procesamiento de datos a gran escala. En este proyecto, Spark es utilizado
+a través de su interfaz en Python para procesar los datos de Twitter que llegan a S3.
+
+Más concretamente, en este proyecto SparkSQL se utiliza para dos tareas independientes.
+
+1) Realizar las consultas necesarias para devolver los datos necesarios en formato JSON para ejecutar la aplicación en Shiny.
+
+2) La extracción de los caracteres que conforman los Tweets para utilizar como entrada del modelo de Minería de Textos.
+
+
+
 * Datalake
-* Spark (con su worker).
-* ~~Python para el análisis de texto~~
-* ~~datalake para exponer los datos procesados a los componentes de: análisis de texto y shinny~~
-* ~~Shinny para visualización de algunas estadísticas de los datos procesados.~~
 
-## Descripción de los componentes
+El DataLake es un método de almacenamiento de datos de un sistema que facilita la colocación de datos en diferentes esquemas y estructuras.
+La idea general del DataLake es contar con lugar de almacenamiento que pueda tener desde datos crudos hasta datos transformados, el cual pueda ser consultado
+por diferentes grupos de usuarios para múltiples propósitos; desde la aplicación de técnicas de modelado hasta la generación de reportes y herramientas de visualización.
 
-### Flume
+En este proyecto el DataLake es utilizado para almacenar los datos que provienen de ambas tareas realizadas en PySpark. Posteriormente, estos datos son utilizados para
+el monitoreo de los datos en la aplicación de Shiny y para la construcción del modelo de Minería de Textos.
 
-La descarga de tweets se realiza por medio de Apache Flume versión 1.6.0, el cual reside en su propio Docker y se encarga de obtener los tweets y almacenarlos en un bucket de Amazon S3. Esta versión de Flume soporta la API de Streaming de Twitter, el cual provee con un _source_ Twitter con las propiedades necesarias para configurar la API con las credenciales. Amazon S3 utiliza un sistema de archivos de Hadoop y Flume provee una configuración destinada para este tipo de _sink_ o sumidero. Además, se definió un canal de tipo _memory_ que mantiene una cola de mensajes en memoria. Aquí se muestra un extracto del archivo de configuración de Flume que establece estas características.
 
-```
-TwitterAgent.sources = Twitter 
-TwitterAgent.channels = MemChannel 
-TwitterAgent.sinks = s3hdfs
-```
 
-De manera predeterminada este source almacena múltiples tweets en un archivo Avro, pero nuestras necesidades requerían los tweets en formato JSON. Para hacer este cambio se requiere modificar el tipo del source, el cual sigue siendo Twitter pero soportado por otra librería. Esta libreria la obtuvimos de una versión personalizada de Flume de Cloudera que contiene las librerias necesarías para realizar la descarga en JSON, la cual puede ser consultada en [Github](https://github.com/cloudera/cdh-twitter-example). Al final la configuración del _source_ de Flume quedó como sigue:
+* Shiny
 
-```
-TwitterAgent.sources.Twitter.type = com.cloudera.flume.source.TwitterSource
-TwitterAgent.sources.Twitter.consumerKey = <twitter-consumer-key>
-TwitterAgent.sources.Twitter.consumerSecret = <twitter-consumer-secret>
-TwitterAgent.sources.Twitter.accessToken = <twitter-access-token>
-TwitterAgent.sources.Twitter.accessTokenSecret = <twitter-access-token-secret>
-TwitterAgent.sources.Twitter.keywords = @realdonaldtrump,#Trump,#trump
-```
-La última línea de código establece las palabras que utilizará la API de Twitter para identificar qué tweets va a descargar, los cuales corresponden a la cuenta de Twitter de Donald Trump y dos hashtags.
+Shiny es una herramienta para la construcción de aplicaciones web a partir de R. La aplicación realizada en este proyecto toma como insumos los datos provenientes
+de la tarea realizada en PySpark que reúne, para cierto determinado período de tiempo:
 
-Otra parte importante es definir las características del sumidero de Flume. El siguiente bloque muestra las características de este.
+1) Número de Tweets y Retweets.
+2) Los usuarios que más realizan Tweets.
+3) Los hashtags más populares.
 
-```
-TwitterAgent.sinks.s3hdfs.type = hdfs
-TwitterAgent.sinks.s3hdfs.hdfs.path = s3n://<aws-access-key-id>:<aws-secret-access-key>@<bucket>/%m-%d-%h
-TwitterAgent.sinks.s3hdfs.hdfs.fileType = DataStream
-TwitterAgent.sinks.s3hdfs.hdfs.filePrefix = tweets
-TwitterAgent.sinks.s3hdfs.hdfs.fileSuffix = .json
-TwitterAgent.sinks.s3hdfs.hdfs.writeFormat = Text
-TwitterAgent.sinks.s3hdfs.hdfs.rollCount = 0
-TwitterAgent.sinks.s3hdfs.hdfs.rollSize = 0  
-TwitterAgent.sinks.s3hdfs.hdfs.batchSize = 100
-TwitterAgent.sinks.s3hdfs.hdfs.useLocalTimeStamp = true
-TwitterAgent.sinks.s3hdfs.hdfs.maxOpenFiles = 5
-```
-Esto define las propiedades del sumidero, como el tipo del sistema de archivos, la ruta al bucket de S3 junto con el patrón para la generación de carpetas, el formato de los archivos, el tamaño de cada archivo, entre otras. Los datos faltantes de la ruta al bucket se extraen el ambiente.
+A partir de estos datos, la aplicación muestra:
 
-Por último, se establecieron las capacidades del canal de Flume con la siguiente configuración.
+1) La serie de tiempo mostrando la evolución del número de Tweets y Retweets, para un período de fechas recientes elegidas por el usuario.
 
-```
-TwitterAgent.channels.MemChannel.capacity = 10000 
-TwitterAgent.channels.MemChannel.transactionCapacity = 1000
-TwitterAgent.channels.MemChannel.type=memory
-```
+2) El Top de usuarios que más han realizado Tweets y su número de Tweets mediante una gráfica de barras, para un número de número de usuarios elegido por el usuario.
 
-Esta configuración se almacena en el archivo `twitter.conf` y se establece la siguiente línea en el comando de la imagen de Docker de Flume dentro del Docker Compose.
-```
-flume-ng agent -n TwitterAgent -c /usr/flume/apache-flume-1.6.0-bin/conf -f /home/flume/twitter.conf -Dflume.root.logger=INFO,console  
-```
+3) La nube de palabras para los hashtags más populares, con el número de hashtags a mostrar elegido por el usuario.
 
-## Requerimientos del ambiente.
-En general, se levanta utilizando el Docker Compose, sin embargo vários componentes requieren que exista la imágen dpa/base la cual se construye con el comando:
-```bash
-docker build --force-rm -t dpa/base docker-images/base
-```
-Después de eso, el ambiente puede construirse con el comando:
-```bash
-docker-compose build --force-rm
-```
 
-## Ejecución :
-Se levanta el Docker Compose con:
-```bash
-docker-compose up -d
-```
-Después, nos conectamos a luigi_worker con:
-```bash
-docker exec -it ambiente_luigi_worker_1 /bin/bash
-```
-lo cual nos devuelve el prompt en bash de luigi worker.
+[Shiny](https://github.com/jaradricc/trump/tree/master/ambiente/docker-images/Shiny)
 
-Podemos conectarnos (para probar línea por línea) al pyspark con:
-```bash
-pyspark --master spark://master:7077 --packages com.amazonaws:aws-java-sdk-pom:1.10.34,org.apache.hadoop:hadoop-aws:2.6.0
-```
+![Shiny 1](Readme_images/shiny_01.PNG)
+![Shiny 2](Readme_images/shiny_02.PNG)
+![Shiny 3](Readme_images/shiny_04.PNG)
