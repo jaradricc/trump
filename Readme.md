@@ -75,6 +75,9 @@ por diferentes grupos de usuarios para múltiples propósitos; desde la aplicaci
 En este proyecto el DataLake es utilizado para almacenar los datos que provienen de ambas tareas realizadas en PySpark. Posteriormente, estos datos son utilizados para
 el monitoreo de los datos en la aplicación de Shiny y para la construcción del modelo de Minería de Textos.
 
+* Python
+
+Con esta herramienta estadística se realizó el modelo de minería de texto con el cual se ha decidido trabajar. Debido a que se ha construido un documento que detalla cada una de las técnicas utilizadas en este modelo, es preferible citar dicho trabajo, con la finalidad de darle robustez a este proyecto. 
 
 
 * Shiny
