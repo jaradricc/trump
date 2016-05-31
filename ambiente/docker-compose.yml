@@ -1,7 +1,7 @@
-flume:
- env_file: .env
- build: docker-images/flume
- command: flume-ng agent -n TwitterAgent -c /usr/flume/apache-flume-1.6.0-bin/conf -f /home/flume/twitter.conf -Dflume.root.logger=INFO,console  
+#flume:
+# env_file: .env
+# build: docker-images/flume
+# command: flume-ng agent -n TwitterAgent -c /usr/flume/apache-flume-1.6.0-bin/conf -f /home/flume/twitter.conf -Dflume.root.logger=INFO,console  
  
 #zookeeper:
 #  image: wurstmeister/zookeeper
@@ -10,13 +10,13 @@ flume:
 #    - "2888:2888"
 #    - "3888:3888"
 
-postgres:
-  build: docker-images/postgres
-  ports:
-    - "5432:5432"
-  volumes_from:
-    - data
-  env_file: .env
+#postgres:
+#  build: docker-images/postgres
+#  ports:
+#    - "5432:5432"
+#  volumes_from:
+#    - data
+#  env_file: .env
 
 #drill:
 #  build: docker-images/drill
@@ -41,7 +41,7 @@ luigi_worker:
   build: docker-images/luigi_worker
   links:
     - luigid:luigid
-    - postgres:postgres
+#    - postgres:postgres
     - spark_master
   env_file: .env
   #command: make deploy
